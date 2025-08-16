@@ -9,8 +9,21 @@ import Dashboard from '@/components/dashboard';
 import Chatbot from '@/components/chatbot';
 import { recommendSchemes } from '@/ai/flows/recommend-schemes';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/use-auth';
+import { Button } from '@/components/ui/button';
+import { Logo } from '@/components/logo';
+import { signInWithGoogle } from '@/services/auth-service';
+import { User as AuthUser } from 'firebase/auth';
+
+const mapAuthUserToProfile = (user: AuthUser, existingProfile: UserProfile): UserProfile => {
+  return {
+    ...existingProfile,
+    fullName: user.displayName || existingProfile.fullName,
+  }
+}
 
 export default function Home() {
+  const { user, loading } = useAuth();
   const [userProfile, setUserProfile] = useState<UserProfile>(defaultProfile);
   const [allSchemes, setAllSchemes] = useState<Scheme[]>([]);
   const [recommendedSchemes, setRecommendedSchemes] = useState<Scheme[]>([]);
@@ -26,6 +39,12 @@ export default function Home() {
   const [bookmarkedSchemes, setBookmarkedSchemes] = useState<Set<string>>(new Set());
   const [appliedSchemes, setAppliedSchemes] = useState<Record<string, ApplicationStatus>>({});
   const { toast } = useToast();
+  
+  useEffect(() => {
+    if (user) {
+        setUserProfile(mapAuthUserToProfile(user, defaultProfile))
+    }
+  }, [user]);
 
   useEffect(() => {
     const fetchSchemes = async () => {
@@ -48,7 +67,7 @@ export default function Home() {
   }, [toast]);
 
   useEffect(() => {
-    if (allSchemes.length === 0) return;
+    if (allSchemes.length === 0 || !user) return;
 
     const fetchRecommendations = async () => {
       setIsLoadingRecommendations(true);
@@ -74,7 +93,7 @@ export default function Home() {
     };
 
     fetchRecommendations();
-  }, [userProfile, allSchemes, toast]);
+  }, [userProfile, allSchemes, toast, user]);
 
   const filteredSchemes = useMemo(() => {
     return allSchemes.filter((scheme) => {
@@ -102,6 +121,21 @@ export default function Home() {
       [schemeName]: status,
     }));
   };
+  
+  if (loading) {
+    return null; // AuthProvider shows a global loader
+  }
+
+  if (!user) {
+    return (
+       <div className="flex h-screen w-full flex-col items-center justify-center bg-background text-foreground p-8 text-center">
+            <Logo className="h-16 w-16 text-accent mb-6" />
+            <h1 className="text-4xl font-bold font-headline mb-2">Welcome to Sarkari Sahayak</h1>
+            <p className="text-lg text-muted-foreground mb-8 max-w-2xl">Your personal AI guide to discovering and applying for government schemes. Sign in to get personalized recommendations.</p>
+            <Button size="lg" onClick={signInWithGoogle}>Sign In with Google</Button>
+        </div>
+    )
+  }
 
   return (
     <div className="flex h-screen w-full flex-col bg-background text-foreground">
