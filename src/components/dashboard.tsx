@@ -42,6 +42,10 @@ export default function Dashboard({
   const handleFilterChange = (key: string, value: string) => {
     onFiltersChange({ ...filters, [key]: value });
   };
+  
+  const renderSkeletons = (count: number) => {
+    return [...Array(count)].map((_, i) => <Skeleton key={i} className="h-64 w-full" />);
+  }
 
   return (
     <div className="space-y-8">
@@ -55,7 +59,7 @@ export default function Dashboard({
         <h2 className="text-2xl font-semibold font-headline mb-4">Recommended For You</h2>
         {isLoadingRecommendations ? (
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {[...Array(3)].map((_, i) => <Skeleton key={i} className="h-64 w-full" />)}
+            {renderSkeletons(3)}
           </div>
         ) : recommendedSchemes.length > 0 ? (
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -93,9 +97,10 @@ export default function Dashboard({
               className="pl-10"
               value={searchTerm}
               onChange={(e) => onSearchTermChange(e.target.value)}
+              disabled={isLoadingRecommendations}
             />
           </div>
-          <Select value={filters.category} onValueChange={(value) => handleFilterChange('category', value)}>
+          <Select value={filters.category} onValueChange={(value) => handleFilterChange('category', value)} disabled={isLoadingRecommendations}>
             <SelectTrigger className="w-full sm:w-[180px]">
               <SelectValue placeholder="Filter by category" />
             </SelectTrigger>
@@ -108,7 +113,11 @@ export default function Dashboard({
           </Select>
         </div>
 
-        {allSchemes.length > 0 ? (
+        {isLoadingRecommendations ? (
+           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+             {renderSkeletons(6)}
+           </div>
+        ) : allSchemes.length > 0 ? (
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {allSchemes.map((scheme) => (
               <SchemeCard

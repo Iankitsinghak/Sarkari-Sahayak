@@ -2,15 +2,19 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import type { UserProfile, Scheme, ApplicationStatus } from '@/lib/types';
-import { schemes as allSchemes, defaultProfile } from '@/lib/data';
+import { defaultProfile } from '@/lib/data';
+import { getAllSchemes } from '@/services/scheme-service';
 import Header from '@/components/header';
 import Dashboard from '@/components/dashboard';
 import Chatbot from '@/components/chatbot';
 import { recommendSchemes } from '@/ai/flows/recommend-schemes';
+import { useToast } from '@/hooks/use-toast';
 
 export default function Home() {
   const [userProfile, setUserProfile] = useState<UserProfile>(defaultProfile);
+  const [allSchemes, setAllSchemes] = useState<Scheme[]>([]);
   const [recommendedSchemes, setRecommendedSchemes] = useState<Scheme[]>([]);
+  const [isLoadingSchemes, setIsLoadingSchemes] = useState(true);
   const [isLoadingRecommendations, setIsLoadingRecommendations] = useState(true);
   
   const [searchTerm, setSearchTerm] = useState('');
@@ -21,8 +25,31 @@ export default function Home() {
 
   const [bookmarkedSchemes, setBookmarkedSchemes] = useState<Set<string>>(new Set());
   const [appliedSchemes, setAppliedSchemes] = useState<Record<string, ApplicationStatus>>({});
+  const { toast } = useToast();
 
   useEffect(() => {
+    const fetchSchemes = async () => {
+      try {
+        setIsLoadingSchemes(true);
+        const schemes = await getAllSchemes();
+        setAllSchemes(schemes);
+      } catch (error) {
+        console.error("Failed to fetch schemes:", error);
+        toast({
+            title: "Error",
+            description: "Could not load government schemes. Please try again later.",
+            variant: "destructive",
+        });
+      } finally {
+        setIsLoadingSchemes(false);
+      }
+    };
+    fetchSchemes();
+  }, [toast]);
+
+  useEffect(() => {
+    if (allSchemes.length === 0) return;
+
     const fetchRecommendations = async () => {
       setIsLoadingRecommendations(true);
       try {
@@ -36,24 +63,26 @@ export default function Home() {
         setRecommendedSchemes(fullRecommendedSchemes);
       } catch (error) {
         console.error('Failed to fetch recommendations:', error);
-        // Optionally, show a toast to the user
+         toast({
+            title: "AI Error",
+            description: "Could not get AI recommendations. Please check your profile and try again.",
+            variant: "destructive",
+        });
       } finally {
         setIsLoadingRecommendations(false);
       }
     };
 
     fetchRecommendations();
-  }, [userProfile]);
+  }, [userProfile, allSchemes, toast]);
 
   const filteredSchemes = useMemo(() => {
     return allSchemes.filter((scheme) => {
       const searchMatch = scheme.name.toLowerCase().includes(searchTerm.toLowerCase()) || scheme.category.toLowerCase().includes(searchTerm.toLowerCase());
       const categoryMatch = filters.category === 'all' || scheme.category === filters.category;
-      // Note: State filtering is not implemented on mock data, but this is where it would go
-      // const stateMatch = filters.state === 'all' || scheme.eligibility.toLowerCase().includes(filters.state.toLowerCase());
       return searchMatch && categoryMatch;
     });
-  }, [searchTerm, filters]);
+  }, [searchTerm, filters, allSchemes]);
 
   const toggleBookmark = (schemeName: string) => {
     setBookmarkedSchemes((prev) => {
@@ -82,7 +111,7 @@ export default function Home() {
           <Dashboard
             userProfile={userProfile}
             recommendedSchemes={recommendedSchemes}
-            isLoadingRecommendations={isLoadingRecommendations}
+            isLoadingRecommendations={isLoadingRecommendations || isLoadingSchemes}
             allSchemes={filteredSchemes}
             searchTerm={searchTerm}
             onSearchTermChange={setSearchTerm}
