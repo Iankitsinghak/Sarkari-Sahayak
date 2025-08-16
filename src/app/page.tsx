@@ -140,7 +140,7 @@ export default function Home() {
   return (
     <div className="flex h-screen w-full flex-col bg-background text-foreground">
       <Header userProfile={userProfile} onProfileUpdate={setUserProfile} />
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 flex-col lg:flex-row overflow-hidden">
         <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
           <Dashboard
             userProfile={userProfile}
@@ -157,7 +157,7 @@ export default function Home() {
             onUpdateStatus={updateApplicationStatus}
           />
         </main>
-        <aside className="hidden w-[350px] flex-shrink-0 border-l border-border bg-card p-4 lg:flex">
+        <aside className="w-full lg:w-[350px] flex-shrink-0 border-t lg:border-t-0 lg:border-l border-border bg-card p-4">
           <Chatbot />
         </aside>
       </div>
