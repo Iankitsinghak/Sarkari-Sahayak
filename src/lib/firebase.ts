@@ -8,6 +8,7 @@ const firebaseConfig = {
   storageBucket: 'sarkari-sahayak-y50gt.firebasestorage.app',
   apiKey: 'AIzaSyAvNcVi2rjHjWEpMiZY61uIwWbILGoP07M',
   authDomain: 'sarkari-sahayak-y50gt.firebaseapp.com',
+  measurementId: '',
   messagingSenderId: '83668272398',
 };
 
