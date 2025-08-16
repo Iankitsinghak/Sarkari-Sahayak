@@ -14,7 +14,7 @@ export const occupations: string[] = ["Student", "Farmer", "Worker", "Entreprene
 export const educationLevels: string[] = ["Below 10th", "10th Pass", "12th Pass", "Graduate", "Post-Graduate"];
 export const casteCategories: string[] = ["General", "OBC", "SC", "ST", "EWS"];
 export const disabilityStatuses: string[] = ["No", "Yes"];
-export const schemeCategories: string[] = ["Education", "Agriculture", "Employment", "Health", "Women", "Startup"];
+export const schemeCategories: string[] = ["Education", "Agriculture", "Employment", "Health", "Women", "Startup", "Social Security", "Housing"];
 
 
 export const defaultProfile: UserProfile = {
@@ -86,5 +86,50 @@ export const schemes: Scheme[] = [
     requiredDocuments: 'KYC documents (Aadhaar and PAN), Account opening form.',
     applicationProcess: 'Available at Post Offices and authorized banks.',
     officialLink: 'https://www.indiapost.gov.in/',
+  },
+  {
+    name: 'Atal Pension Yojana (APY)',
+    category: 'Social Security',
+    eligibility: 'Any Indian citizen between 18-40 years with a bank account.',
+    benefits: 'Fixed pension of Rs. 1000, 2000, 3000, 4000, or 5000 per month after the age of 60.',
+    requiredDocuments: 'Aadhaar Card, Bank account details.',
+    applicationProcess: 'Subscribe through your bank or post office.',
+    officialLink: 'https://www.npscra.nsdl.co.in/apply-for-apy.php',
+  },
+  {
+    name: 'Pradhan Mantri Awas Yojana - Urban (PMAY-U)',
+    category: 'Housing',
+    eligibility: 'Economically Weaker Section (EWS), Low Income Group (LIG) and Middle Income Group (MIG). The beneficiary family should not own a pucca house.',
+    benefits: 'Credit-linked subsidy on home loans, financial assistance for house construction.',
+    requiredDocuments: 'Aadhaar Card, Income proof, Property documents (if applicable).',
+    applicationProcess: 'Apply online through the PMAY-U official website or through Common Service Centers (CSCs).',
+    officialLink: 'https://pmay-urban.gov.in/',
+  },
+  {
+    name: 'National Means-cum-Merit Scholarship Scheme (NMMSS)',
+    category: 'Education',
+    eligibility: 'Students of class 9 from economically weaker sections, who have secured at least 55% marks in Class 8 examination. Parental income not more than Rs. 3.5 lakh per annum.',
+    benefits: 'Scholarship of Rs. 12,000 per annum.',
+    requiredDocuments: 'Caste certificate, Income certificate, Mark sheet of class 8.',
+    applicationProcess: 'Apply through the National Scholarship Portal (NSP).',
+    officialLink: 'https://scholarships.gov.in/',
+  },
+  {
+    name: 'Sukanya Samriddhi Yojana (SSY)',
+    category: 'Women',
+    eligibility: 'Girl child below the age of 10 years. An account can be opened by parents or legal guardians.',
+    benefits: 'High interest rate, tax benefits under Section 80C. The account matures after 21 years or on marriage of the girl child after she attains 18 years.',
+    requiredDocuments: 'Birth certificate of the girl child, Identity and address proof of the guardian.',
+    applicationProcess: 'Open an account in any post office or authorized bank branch.',
+    officialLink: 'https://www.indiapost.gov.in/',
+  },
+  {
+    name: 'Deen Dayal Upadhyaya Grameen Kaushalya Yojana (DDU-GKY)',
+    category: 'Employment',
+    eligibility: 'Rural youth between 15 and 35 years of age.',
+    benefits: 'Skill training and placement support in various sectors.',
+    requiredDocuments: 'Aadhaar Card, BPL Card (if applicable), Age proof.',
+    applicationProcess: 'Contact the State Skill Development Mission or find a training center nearby.',
+    officialLink: 'https://ddugky.gov.in/',
   },
 ];
