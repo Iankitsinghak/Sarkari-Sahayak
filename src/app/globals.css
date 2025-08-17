@@ -2,77 +2,80 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  :root {
-    /* Light theme */
-    --background: 204 100% 97%;
-    --foreground: 224 71% 4%;
-    --card: 0 0% 100%;
-    --card-foreground: 224 71% 4%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 224 71% 4%;
-    --primary: 210 85% 55%; /* Vibrant Blue */
-    --primary-foreground: 0 0% 100%;
-    --secondary: 142 72% 45%; /* Parrot Green */
-    --secondary-foreground: 0 0% 100%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 233 47% 49%;
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 210 85% 55%;
-    --radius: 0.75rem;
-
-    /* Chart colors */
-    --chart-1: 200 85% 55%;
-    --chart-2: 142 72% 45%;
-    --chart-3: 30 90% 55%;
-    --chart-4: 280 70% 60%;
-    --chart-5: 340 80% 55%;
-  }
-
-  .dark {
-    --background: 222 47% 11%;
-    --foreground: 210 40% 98%;
-    --card: 222 47% 11%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222 47% 11%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 210 85% 55%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 142 72% 45%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217 33% 17%;
-    --muted-foreground: 215 20% 65%;
-    --accent: 233 47% 49%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 217 33% 17%;
-    --input: 217 33% 17%;
-    --ring: 210 85% 55%;
-  }
+/* ===== FONT + GLOBAL RESET ===== */
+html, body {
+  @apply font-body text-gray-800 bg-white scroll-smooth;
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
 }
 
-@layer base {
-  * {
-    @apply border-border transition-colors duration-300 ease-in-out;
-  }
+* {
+  @apply transition-colors duration-300 ease-in-out;
+}
 
-  body {
-    @apply bg-background text-foreground font-sans antialiased;
-    background: linear-gradient(135deg, hsl(210, 85%, 55%) 0%, hsl(142, 72%, 45%) 100%);
-    min-height: 100vh;
-  }
+/* ===== SCROLLBAR STYLE ===== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-gray-100;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-gradient-to-b from-blue-400 to-green-400 rounded-full;
+}
 
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-bold tracking-tight;
-  }
+/* ===== TEXT STYLES ===== */
+h1, h2, h3, h4, h5, h6 {
+  @apply font-bold tracking-tight text-gray-900;
+}
 
-  a {
-    @apply transition-colors hover:text-primary;
-  }
+p {
+  @apply leading-relaxed text-gray-700;
+}
+
+/* ===== BUTTON STYLES ===== */
+.btn-primary {
+  @apply px-6 py-3 rounded-2xl font-semibold shadow-md 
+         bg-gradient-to-r from-blue-500 via-green-400 to-blue-600
+         text-white hover:scale-105 hover:shadow-lg 
+         transition-all duration-300 ease-in-out;
+}
+
+.btn-secondary {
+  @apply px-6 py-3 rounded-2xl font-semibold border border-blue-400 text-blue-600
+         hover:bg-blue-50 hover:scale-105 transition-all duration-300;
+}
+
+/* ===== CARD STYLE ===== */
+.card {
+  @apply bg-white rounded-2xl shadow-md p-6 hover:shadow-lg transition duration-300;
+}
+
+/* ===== NAVBAR HOVER LINK ===== */
+.nav-link {
+  @apply relative text-gray-700 font-medium hover:text-blue-600 transition;
+}
+
+.nav-link::after {
+  content: '';
+  @apply absolute left-0 -bottom-1 w-0 h-[2px] bg-gradient-to-r from-blue-500 to-green-400 transition-all duration-300;
+}
+
+.nav-link:hover::after {
+  @apply w-full;
+}
+
+/* ===== ANIMATED GRADIENT BACKGROUND ===== */
+.animated-bg {
+  background: linear-gradient(-45deg, #ffffff, #dbeafe, #bbf7d0, #93c5fd);
+  background-size: 400% 400%;
+  animation: gradientShift 12s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
