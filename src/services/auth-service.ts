@@ -15,8 +15,14 @@ export async function signInWithGoogle(): Promise<User | null> {
   try {
     const result = await signInWithPopup(auth, provider);
     return result.user;
-  } catch (error) {
-    console.error('Error signing in with Google', error);
+  } catch (error: any) {
+    if (error.code === 'auth/popup-blocked') {
+      alert('Popup blocked! Please allow popups for this site.');
+    } else if (error.code === 'auth/network-request-failed') {
+      alert('Network error, check your internet.');
+    } else {
+      console.error('Google Sign-In Error:', error);
+    }
     return null;
   }
 }
