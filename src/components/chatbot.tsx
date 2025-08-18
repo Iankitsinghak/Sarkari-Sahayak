@@ -96,55 +96,58 @@ export default function Chatbot() {
         </CardHeader>
 
         {/* Messages area */}
-        <CardContent className="flex-1 p-0">
-          <ScrollArea className="h-full" ref={scrollAreaRef}>
-            <div className="flex flex-col gap-4 p-4">
-              {messages.map((message) => (
-                <div
-                  key={message.id}
-                  className={cn('flex items-end gap-2', {
-                    'justify-end': message.sender === 'user',
-                  })}
-                >
-                  {message.sender === 'bot' && (
-                    <Avatar className="h-8 w-8">
-                      <AvatarFallback className="bg-gradient-to-r from-purple-400 to-blue-400 text-white">
-                        🤖
-                      </AvatarFallback>
-                    </Avatar>
-                  )}
-                  <div
-                    className={cn('max-w-[75%] rounded-xl p-3 text-sm shadow', {
-                      'bg-gradient-to-r from-purple-500 to-blue-500 text-white': message.sender === 'user',
-                      'bg-gray-100 text-gray-800': message.sender === 'bot',
-                    })}
-                  >
-                    {message.text}
-                  </div>
-                  {message.sender === 'user' && (
-                    <Avatar className="h-8 w-8">
-                      <AvatarFallback className="bg-gray-200">
-                        <User className="h-4 w-4 text-gray-600" />
-                      </AvatarFallback>
-                    </Avatar>
-                  )}
-                </div>
-              ))}
-              {isLoading && (
-                <div className="flex items-center gap-3">
+        {/* Messages area */}
+        <CardContent className="flex-1 p-0 overflow-hidden">
+          <div
+            ref={scrollAreaRef}
+            className="h-full overflow-y-auto flex flex-col gap-4 p-4"
+          >
+            {messages.map((message) => (
+              <div
+                key={message.id}
+                className={cn('flex items-end gap-2', {
+                  'justify-end': message.sender === 'user',
+                })}
+              >
+                {message.sender === 'bot' && (
                   <Avatar className="h-8 w-8">
                     <AvatarFallback className="bg-gradient-to-r from-purple-400 to-blue-400 text-white">
                       🤖
                     </AvatarFallback>
                   </Avatar>
-                  <div className="bg-gray-100 rounded-xl p-3">
-                    <Loader2 className="h-5 w-5 animate-spin text-gray-500" />
-                  </div>
+                )}
+                <div
+                  className={cn('max-w-[75%] rounded-xl p-3 text-sm shadow', {
+                    'bg-gradient-to-r from-purple-500 to-blue-500 text-white': message.sender === 'user',
+                    'bg-gray-100 text-gray-800': message.sender === 'bot',
+                  })}
+                >
+                  {message.text}
                 </div>
-              )}
-            </div>
-          </ScrollArea>
+                {message.sender === 'user' && (
+                  <Avatar className="h-8 w-8">
+                    <AvatarFallback className="bg-gray-200">
+                      <User className="h-4 w-4 text-gray-600" />
+                    </AvatarFallback>
+                  </Avatar>
+                )}
+              </div>
+            ))}
+            {isLoading && (
+              <div className="flex items-center gap-3">
+                <Avatar className="h-8 w-8">
+                  <AvatarFallback className="bg-gradient-to-r from-purple-400 to-blue-400 text-white">
+                    🤖
+                  </AvatarFallback>
+                </Avatar>
+                <div className="bg-gray-100 rounded-xl p-3">
+                  <Loader2 className="h-5 w-5 animate-spin text-gray-500" />
+                </div>
+              </div>
+            )}
+          </div>
         </CardContent>
+
 
         {/* Input area */}
         <CardFooter className="border-t p-3 bg-white">
