@@ -6,8 +6,8 @@
 
 'use server';
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import { ai } from '@/ai/genkit';
+import { z } from 'genkit';
 
 const SchemeChatbotInputSchema = z.object({
   query: z.string().describe('The user query about government schemes.'),
@@ -19,14 +19,10 @@ const SchemeChatbotOutputSchema = z.object({
 });
 export type SchemeChatbotOutput = z.infer<typeof SchemeChatbotOutputSchema>;
 
-export async function schemeChatbot(input: SchemeChatbotInput): Promise<SchemeChatbotOutput> {
-  return schemeChatbotFlow(input);
-}
-
 const prompt = ai.definePrompt({
   name: 'schemeChatbotPrompt',
-  input: {schema: SchemeChatbotInputSchema},
-  output: {schema: SchemeChatbotOutputSchema},
+  input: { schema: SchemeChatbotInputSchema },
+  output: { schema: SchemeChatbotOutputSchema },
   prompt: `You are a helpful AI chatbot assistant designed to answer user questions about government schemes.
 
   You have access to a database of schemes and can provide information on scheme names, eligibility criteria, benefits, required documents, and the application process.
@@ -38,14 +34,20 @@ const prompt = ai.definePrompt({
   User Query: {{{query}}}`,
 });
 
-const schemeChatbotFlow = ai.defineFlow(
+export const schemeChatbotFlow = ai.defineFlow(
   {
     name: 'schemeChatbotFlow',
     inputSchema: SchemeChatbotInputSchema,
     outputSchema: SchemeChatbotOutputSchema,
   },
-  async input => {
-    const {output} = await prompt(input);
-    return output!;
+  async (input) => {
+    const result = await prompt(input);
+    return {
+      response: result.output?.response ?? "Sorry, I couldn't generate a response.",
+    };
   }
 );
+
+export async function schemeChatbot(input: SchemeChatbotInput): Promise<SchemeChatbotOutput> {
+  return schemeChatbotFlow(input);
+}
