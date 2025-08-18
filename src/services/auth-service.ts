@@ -1,17 +1,19 @@
 "use client";
 
 import {
-  GoogleAuthProvider,
+  auth,
+  googleProvider
+} from "@/lib/firebase";
+import {
   signInWithPopup,
   signInWithRedirect,
   getRedirectResult,
   signOut as firebaseSignOut,
   onAuthStateChanged,
-  type User,
+  type User
 } from "firebase/auth";
-import { auth, googleProvider } from "@/lib/firebase";
 
-// Sign in with Google
+// Sign in with Google (popup preferred)
 export async function signInWithGoogle(): Promise<User | null> {
   if (!auth) return null;
 
@@ -21,7 +23,6 @@ export async function signInWithGoogle(): Promise<User | null> {
   } catch (error: any) {
     console.error("Google Sign-In Error:", error.code, error.message);
 
-    // Handle common cases
     if (error.code === "auth/unauthorized-domain") {
       alert("Domain not authorized in Firebase console.");
     } else if (error.code === "auth/operation-not-allowed") {
@@ -30,15 +31,14 @@ export async function signInWithGoogle(): Promise<User | null> {
       error.code === "auth/popup-blocked" ||
       error.code === "auth/popup-closed-by-user"
     ) {
-      // fallback to redirect
       await signInWithRedirect(auth, googleProvider);
     }
     return null;
   }
 }
 
-// Complete redirect sign-in (must be called once on app load)
-export async function handleRedirectResult() {
+// Complete redirect flow (optional fallback)
+export async function handleRedirectResult(): Promise<User | null> {
   if (!auth) return null;
   try {
     const result = await getRedirectResult(auth);
@@ -49,6 +49,7 @@ export async function handleRedirectResult() {
   }
 }
 
+// Sign out
 export async function signOut(): Promise<void> {
   if (!auth) return;
   try {
@@ -58,6 +59,7 @@ export async function signOut(): Promise<void> {
   }
 }
 
+// Listen for auth changes
 export function onAuthChanged(callback: (user: User | null) => void) {
   if (!auth) return () => {};
   return onAuthStateChanged(auth, callback);
