@@ -1,34 +1,33 @@
 'use server';
 
 /**
- * @fileOverview A government scheme recommendation AI agent.
+ * Government Scheme Recommendation AI Flow
  *
- * - recommendSchemes - A function that handles the scheme recommendation process.
- * - RecommendSchemesInput - The input type for the recommendSchemes function.
- * - RecommendSchemesOutput - The return type for the recommendSchemes function.
+ * - recommendSchemes: Main function to run the recommendation flow
+ * - Input schema defines user profile + available schemes
+ * - Output schema returns recommended schemes with short summaries
  */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import { ai } from '@/ai/genkit';
+import { z } from 'genkit';
 
+// ✅ Input schema
 const RecommendSchemesInputSchema = z.object({
-  profile: z
-    .object({
-      fullName: z.string(),
-      age: z.number(),
-      gender: z.string(),
-      locationState: z.string(),
-      locationDistrict: z.string(),
-      incomeLevel: z.string(),
-      occupation: z.string(),
-      educationLevel: z.string(),
-      casteCategory: z.string(),
-      disabilityStatus: z.string(),
-      aadhaarLinked: z.string(),
-    })
-    .describe('The user profile.'),
-  schemes: z
-    .array(z.object({
+  profile: z.object({
+    fullName: z.string(),
+    age: z.number(),
+    gender: z.string(),
+    locationState: z.string(),
+    locationDistrict: z.string(),
+    incomeLevel: z.string(),
+    occupation: z.string(),
+    educationLevel: z.string(),
+    casteCategory: z.string(),
+    disabilityStatus: z.string(),
+    aadhaarLinked: z.string(),
+  }),
+  schemes: z.array(
+    z.object({
       name: z.string(),
       category: z.string(),
       eligibility: z.string(),
@@ -36,64 +35,78 @@ const RecommendSchemesInputSchema = z.object({
       requiredDocuments: z.string(),
       applicationProcess: z.string(),
       officialLink: z.string(),
-    }))
-    .describe('A list of government schemes.'),
+    })
+  ),
 });
 export type RecommendSchemesInput = z.infer<typeof RecommendSchemesInputSchema>;
 
-const RecommendSchemesOutputSchema = z.array(z.object({
-  name: z.string(),
-  summary: z.string(),
-}));
-export type RecommendSchemesOutput = z.infer<typeof RecommendSchemesOutputSchema>;
+// ✅ Output schema
+const RecommendSchemesOutputSchema = z.array(
+  z.object({
+    name: z.string(),
+    summary: z.string(),
+  })
+);
+export type RecommendSchemesOutput = z.infer<
+  typeof RecommendSchemesOutputSchema
+>;
 
-export async function recommendSchemes(input: RecommendSchemesInput): Promise<RecommendSchemesOutput> {
-  return recommendSchemesFlow(input);
-}
-
-const prompt = ai.definePrompt({
+// ✅ Prompt definition
+const recommendSchemesPrompt = ai.definePrompt({
   name: 'recommendSchemesPrompt',
-  input: {schema: RecommendSchemesInputSchema},
-  output: {schema: RecommendSchemesOutputSchema},
-  prompt: `You are an AI assistant that recommends government schemes to users based on their profiles.
+  input: { schema: RecommendSchemesInputSchema },
+  output: { schema: RecommendSchemesOutputSchema },
+  prompt: `
+You are an AI assistant that recommends government schemes to users based on their profiles.
 
-  User Profile:
-  Full Name: {{{profile.fullName}}}
-  Age: {{{profile.age}}}
-  Gender: {{{profile.gender}}}
-  Location State: {{{profile.locationState}}}
-  Location District: {{{profile.locationDistrict}}}
-  Income Level: {{{profile.incomeLevel}}}
-  Occupation: {{{profile.occupation}}}
-  Education Level: {{{profile.educationLevel}}}
-  Caste Category: {{{profile.casteCategory}}}
-  Disability Status: {{{profile.disabilityStatus}}}
-  Aadhaar Linked: {{{profile.aadhaarLinked}}}
+User Profile:
+- Full Name: {{{profile.fullName}}}
+- Age: {{{profile.age}}}
+- Gender: {{{profile.gender}}}
+- Location: {{{profile.locationDistrict}}}, {{{profile.locationState}}}
+- Income Level: {{{profile.incomeLevel}}}
+- Occupation: {{{profile.occupation}}}
+- Education Level: {{{profile.educationLevel}}}
+- Caste Category: {{{profile.casteCategory}}}
+- Disability Status: {{{profile.disabilityStatus}}}
+- Aadhaar Linked: {{{profile.aadhaarLinked}}}
 
-  Schemes:
-  {{#each schemes}}
-  Name: {{{name}}}
+Available Schemes:
+{{#each schemes}}
+- Name: {{{name}}}
   Category: {{{category}}}
   Eligibility: {{{eligibility}}}
   Benefits: {{{benefits}}}
-  Required Documents: {{{requiredDocuments}}}
-  Application Process: {{{applicationProcess}}}
-  Official Link: {{{officialLink}}}
-  {{/each}}
+  Documents: {{{requiredDocuments}}}
+  Process: {{{applicationProcess}}}
+  Link: {{{officialLink}}}
+{{/each}}
 
-  Recommend schemes that are relevant to the user's profile and provide a short summary of each scheme, explaining the key benefits and eligibility requirements.
-  Return a JSON array of objects with the scheme name and summary.
+Now, recommend the most relevant schemes for this user.
+For each recommendation, return:
+- "name": scheme name
+- "summary": 2–3 lines explaining key benefits & eligibility
+
+⚠️ Only return valid JSON array matching the schema.
   `,
 });
 
+// ✅ Flow definition
 const recommendSchemesFlow = ai.defineFlow(
   {
     name: 'recommendSchemesFlow',
     inputSchema: RecommendSchemesInputSchema,
     outputSchema: RecommendSchemesOutputSchema,
   },
-  async input => {
-    const {output} = await prompt(input);
-    return output!;
+  async (input) => {
+    const { output } = await recommendSchemesPrompt(input);
+    return output ?? [];
   }
 );
+
+// ✅ Exported function
+export async function recommendSchemes(
+  input: RecommendSchemesInput
+): Promise<RecommendSchemesOutput> {
+  return recommendSchemesFlow(input);
+}
