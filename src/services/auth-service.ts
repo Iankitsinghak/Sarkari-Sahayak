@@ -37,7 +37,7 @@ export async function signInWithGoogle(): Promise<User | null> {
   }
 }
 
-// Complete redirect flow (optional fallback)
+// Complete redirect flow
 export async function handleRedirectResult(): Promise<User | null> {
   if (!auth) return null;
   try {
