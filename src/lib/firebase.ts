@@ -1,34 +1,13 @@
-// src/lib/firebase.ts
-import { initializeApp, getApp, getApps } from "firebase/app";
-import {
-  getAuth,
-  GoogleAuthProvider,
-  browserLocalPersistence,
-  setPersistence,
-} from "firebase/auth";
+// firebase.ts
+import { initializeApp } from "firebase/app";
+import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAvNcVi2rjHjWEpMiZY61uIwWbILGoP07M",
-  authDomain: "sarkari-sahayak-y50gt.firebaseapp.com",
-  projectId: "sarkari-sahayak-y50gt",
-  storageBucket: "sarkari-sahayak-y50gt.appspot.com",
-  messagingSenderId: "83668272398",
-  appId: "1:83668272398:web:d9623abd2f8a1438f1835f",
-};
+// Parse JSON from env variable
+const firebaseConfig = JSON.parse(process.env.NEXT_PUBLIC_FIREBASE_CONFIG!);
 
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
 
-// Only create auth in the browser
-export const auth =
-  typeof window !== "undefined" ? getAuth(app) : (null as any);
-
-export const googleProvider = new GoogleAuthProvider();
-googleProvider.setCustomParameters({ prompt: "select_account" });
-
-// Ensure persistence (so user stays signed in on refresh)
-if (typeof window !== "undefined" && auth) {
-  setPersistence(auth, browserLocalPersistence).catch((e) => {
-    console.error("Auth persistence error:", e);
-  });
-}
-
+// Export Auth + Google provider
+export const auth = getAuth(app);
+export const provider = new GoogleAuthProvider();
