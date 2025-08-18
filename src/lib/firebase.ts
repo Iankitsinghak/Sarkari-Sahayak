@@ -1,5 +1,6 @@
-// src/lib/firebase.ts
-import { initializeApp, getApp, getApps } from "firebase/app";
+"use client";
+
+import { initializeApp, getApps, getApp } from "firebase/app";
 import {
   getAuth,
   GoogleAuthProvider,
@@ -7,7 +8,11 @@ import {
   setPersistence,
 } from "firebase/auth";
 
-// Firebase config using Vercel env variables
+// Make sure env variables exist
+if (!import.meta.env.VITE_FIREBASE_API_KEY) {
+  throw new Error("Missing Firebase environment variables!");
+}
+
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -19,14 +24,14 @@ const firebaseConfig = {
 
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
-// Only create auth in the browser
+// Only initialize auth in the browser
 export const auth =
   typeof window !== "undefined" ? getAuth(app) : (null as any);
 
 export const googleProvider = new GoogleAuthProvider();
 googleProvider.setCustomParameters({ prompt: "select_account" });
 
-// Ensure persistence (so user stays signed in on refresh)
+// Persist user session
 if (typeof window !== "undefined" && auth) {
   setPersistence(auth, browserLocalPersistence).catch((e) => {
     console.error("Auth persistence error:", e);
