@@ -1,16 +1,18 @@
-'use client';
+"use client";
 
-import { useState, useEffect, createContext, ReactNode } from 'react';
-import type { User } from 'firebase/auth';
-import { onAuthChanged } from '@/services/auth-service';
-import { Loader2 } from 'lucide-react';
+import { createContext, useState, useEffect, ReactNode } from "react";
+import type { User } from "firebase/auth";
+import { onAuthChanged } from "@/services/auth-service";
+import { Loader2 } from "lucide-react";
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
 }
 
-export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType | undefined>(
+  undefined
+);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -21,7 +23,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(user);
       setLoading(false);
     });
-
     return () => unsubscribe();
   }, []);
 
