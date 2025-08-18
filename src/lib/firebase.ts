@@ -1,15 +1,33 @@
-// firebase.ts
-import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider } from "firebase/auth";
+// src/lib/firebase.ts
+import { initializeApp, getApp, getApps } from "firebase/app";
+import {
+  getAuth,
+  GoogleAuthProvider,
+  browserLocalPersistence,
+  setPersistence,
+} from "firebase/auth";
 
-// ✅ Use NEXT_PUBLIC_ vars for Next.js
 const firebaseConfig = {
-  clientId: process.env.NEXT_PUBLIC_FIREBASE_CLIENT_ID!,
+  apiKey: "AIzaSyAvNcVi2rjHjWEpMiZY61uIwWbILGoP07M",
+  authDomain: "sarkari-sahayak-y50gt.firebaseapp.com",
+  projectId: "sarkari-sahayak-y50gt",
+  storageBucket: "sarkari-sahayak-y50gt.appspot.com",
+  messagingSenderId: "83668272398",
+  appId: "1:83668272398:web:d9623abd2f8a1438f1835f",
 };
 
-const app = initializeApp(firebaseConfig as any);
+const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
-const auth = getAuth(app);
-const googleProvider = new GoogleAuthProvider();
+// Only create auth in the browser
+export const auth =
+  typeof window !== "undefined" ? getAuth(app) : (null as any);
 
-export { auth, googleProvider };
+export const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({ prompt: "select_account" });
+
+// Ensure persistence (so user stays signed in on refresh)
+if (typeof window !== "undefined" && auth) {
+  setPersistence(auth, browserLocalPersistence).catch((e) => {
+    console.error("Auth persistence error:", e);
+  });
+}
