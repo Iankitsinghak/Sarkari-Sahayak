@@ -2,15 +2,13 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
-// ✅ Use only Client ID from .env
+// ✅ Use NEXT_PUBLIC_ vars for Next.js
 const firebaseConfig = {
-  clientId: import.meta.env.VITE_FIREBASE_CLIENT_ID,
+  clientId: process.env.NEXT_PUBLIC_FIREBASE_CLIENT_ID!,
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig as any);
 
-// Auth + Google Provider
 const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 
