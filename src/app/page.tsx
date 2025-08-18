@@ -91,71 +91,57 @@ export default function Home() {
   if (loading) return null;
 
   if (!user) {
-  return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-100 via-white to-green-100 relative overflow-hidden p-6 text-center">
-      {/* Floating gradient blobs for startup vibe */}
-      <motion.div
-        className="absolute top-20 left-10 w-72 h-72 rounded-full bg-gradient-to-r from-blue-400 to-green-300 opacity-30 blur-3xl"
-        animate={{ scale: [1, 1.2, 1] }}
-        transition={{ duration: 6, repeat: Infinity, repeatType: "mirror" }}
-      />
-      <motion.div
-        className="absolute bottom-20 right-10 w-72 h-72 rounded-full bg-gradient-to-r from-green-400 to-blue-300 opacity-30 blur-3xl"
-        animate={{ scale: [1.1, 0.9, 1.1] }}
-        transition={{ duration: 8, repeat: Infinity, repeatType: "mirror" }}
-      />
-
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        className="z-10"
-      >
-        <Logo className="h-20 w-20 mx-auto text-green-500 mb-6 drop-shadow-md" />
-        <h1 className="text-6xl font-extrabold bg-gradient-to-r from-blue-600 via-green-500 to-blue-600 bg-clip-text text-transparent animate-text mb-4">
-          Sarkari Sahayak
-        </h1>
-        <p className="text-lg text-gray-700 mb-8 max-w-xl mx-auto">
-          Discover every government scheme you’re eligible for — powered by AI, made for India 🇮🇳
-        </p>
-        <Button
-          size="lg"
-          className="bg-gradient-to-r from-blue-500 to-green-500 hover:from-green-500 hover:to-blue-500 text-white px-8 py-4 rounded-2xl shadow-xl transition-transform hover:scale-105"
-          onClick={signInWithGoogle}
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 via-white to-green-50 p-6 text-center">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
         >
-          🚀 Sign In with Google
-        </Button>
-      </motion.div>
-
-      {/* Features section */}
-      <motion.div
-        className="mt-20 grid gap-6 md:grid-cols-3 max-w-6xl z-10"
-        initial="hidden"
-        animate="visible"
-        variants={{
-          hidden: {},
-          visible: { transition: { staggerChildren: 0.2 } },
-        }}
-      >
-        {[
-          { title: "AI Recommendations", desc: "Schemes tailored to your profile instantly." },
-          { title: "All Schemes in One Place", desc: "No need to browse 1000+ portals manually." },
-          { title: "Easy Applications", desc: "Auto-filled forms for faster access." },
-        ].map((f, i) => (
-          <motion.div
-            key={i}
-            variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
-            className="rounded-2xl bg-white/70 backdrop-blur-md shadow-lg border border-white/40 p-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
+          <Logo className="h-20 w-20 mx-auto text-green-500 mb-6" />
+          <h1 className="text-5xl font-extrabold bg-gradient-to-r from-blue-600 to-green-500 bg-clip-text text-transparent mb-4">
+            Sarkari Sahayak
+          </h1>
+          <p className="text-lg text-gray-600 mb-8 max-w-xl mx-auto">
+            Discover every government scheme you’re eligible for — powered by AI, made for India 🇮🇳
+          </p>
+          <Button
+            size="lg"
+            className="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-xl shadow-lg"
+            onClick={signInWithGoogle}
           >
-            <h3 className="text-xl font-semibold text-blue-600 mb-2">{f.title}</h3>
-            <p className="text-gray-700">{f.desc}</p>
-          </motion.div>
-        ))}
-      </motion.div>
-    </div>
-  );
-}
+            Sign In with Google
+          </Button>
+        </motion.div>
 
+        {/* Features section */}
+        <motion.div
+          className="mt-20 grid gap-6 md:grid-cols-3 max-w-5xl"
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: {},
+            visible: { transition: { staggerChildren: 0.2 } },
+          }}
+        >
+          {[
+            { title: "AI Recommendations", desc: "Get schemes tailored to your profile instantly." },
+            { title: "All Schemes in One Place", desc: "No more searching 1000+ websites manually." },
+            { title: "Easy Applications", desc: "Auto-filled forms, faster access to benefits." },
+          ].map((f, i) => (
+            <motion.div
+              key={i}
+              variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
+              className="bg-white rounded-2xl shadow-md p-6 text-left border border-gray-100"
+            >
+              <h3 className="text-xl font-semibold text-blue-600 mb-2">{f.title}</h3>
+              <p className="text-gray-600">{f.desc}</p>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen w-full flex-col bg-white text-gray-900">
